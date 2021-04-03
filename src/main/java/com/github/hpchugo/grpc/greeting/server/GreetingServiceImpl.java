@@ -25,7 +25,7 @@ public class GreetingServiceImpl extends GreetServiceGrpc.GreetServiceImplBase {
     }
 
     @Override
-    public void greetManyTime(GreetManyTimesRequest request, StreamObserver<GreetManyTimesResponse> responseObserver){
+    public void greetManyTimes(GreetManyTimesRequest request, StreamObserver<GreetManyTimesResponse> responseObserver){
         String firstName = request.getGreeting().getFirstName();
        try {
            for (int i = 0; i < 10; i++) {
