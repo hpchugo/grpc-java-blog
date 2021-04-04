@@ -26,13 +26,19 @@ message GreetManyTimesResponse{
   string result = 1;
 }
 
-
-
 message LongGreetRequest{
   Greeting greeting = 1;
 }
 
 message LongGreetResponse{
+  string result = 1;
+}
+
+message GreetEveryoneRequest{
+  Greeting greeting = 1;
+}
+
+message GreetEveryoneResponse{
   string result = 1;
 }
 
@@ -46,4 +52,6 @@ service GreetService{
   //Client Streaming
   rpc LongGreet(stream LongGreetRequest) returns (LongGreetResponse){};
 
+  //Bi Directional Streaming
+  rpc GreetEveryone(stream GreetEveryoneRequest) returns(stream GreetEveryoneResponse);
 }
