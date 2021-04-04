@@ -68,9 +68,7 @@ public class GreetingClient {
                 .build();
 
         greetClient.greetManyTimes(greetManyTimesRequest)
-                .forEachRemaining(greetManyTimesResponse -> {
-                    out.println(greetManyTimesResponse.getResult());
-                });
+                .forEachRemaining(greetManyTimesResponse -> out.println(greetManyTimesResponse.getResult()));
 
     }
 
