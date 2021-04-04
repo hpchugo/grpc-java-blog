@@ -85,7 +85,7 @@ public class GreetingClient {
 
             @Override
             public void onError(Throwable t) {
-
+                latch.countDown();
             }
 
             @Override
