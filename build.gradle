@@ -28,7 +28,7 @@ protobuf {
 }
 
 dependencies {
-    implementation 'io.grpc:grpc-netty-shaded:1.36.0'
+    implementation 'io.grpc:grpc-netty-shaded:1.36.0' // to ssl security
     implementation 'io.grpc:grpc-protobuf:1.36.0'
     implementation 'io.grpc:grpc-stub:1.36.0'
     implementation "io.grpc:grpc-services:1.36.0"   // reflection
@@ -36,8 +36,7 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    // https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-sync
-    compile group: 'org.mongodb', name: 'mongodb-driver-sync', version: '3.8.2'
+    implementation group: 'org.mongodb', name: 'mongodb-driver-sync', version: '4.2.2'
 }
 
 // if you have source imports issues, add the below
