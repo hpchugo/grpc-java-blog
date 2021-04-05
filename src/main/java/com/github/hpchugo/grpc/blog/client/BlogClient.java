@@ -2,11 +2,10 @@ package com.github.hpchugo.grpc.blog.client;
 
 import com.proto.blog.*;
 import io.grpc.*;
-import javax.net.ssl.SSLException;
 import static java.lang.System.out;
 
 public class BlogClient {
-    public static void main(String[] args) throws SSLException {
+    public static void main(String[] args){
         out.println("Hello I'm a gRPC client for Blog");
         BlogClient main = new BlogClient();
         main.run();
@@ -30,7 +29,7 @@ public class BlogClient {
         out.printf("Received create blog response %s", response.toString());
 
         out.println("Reading blog...");
-        String blogId = "606b515453be4237210117f5";//response.getBlog().getId();
+        String blogId = response.getBlog().getId();
         ReadBlogResponse readBlogResponse = blogClient.readBlog(ReadBlogRequest.newBuilder().setBlogId(blogId).build());
         out.printf("Received create blog response %s", readBlogResponse.toString());
 
@@ -44,9 +43,11 @@ public class BlogClient {
 
         out.println("Updating blog...");
         UpdateBlogResponse updateBlogResponse =blogClient.updateBlog(UpdateBlogRequest.newBuilder().setBlog(blogUpdated).build());
+        out.printf("Updated blog\n Received update blog response %s", updateBlogResponse.toString());
 
-        out.println("Updating blog...");
-        out.printf("Received update blog response %s", updateBlogResponse.toString());
+        out.println("Deleting blog...");
+        DeleteBlogResponse deleteBlogResponse =blogClient.deleteBlog(DeleteBlogRequest.newBuilder().setBlogId(blogId).build());
+        out.printf("Deleted blog\n Received update blog response %s", deleteBlogResponse.toString());
 
         channel.shutdown();
         out.println("Shutting down channel");

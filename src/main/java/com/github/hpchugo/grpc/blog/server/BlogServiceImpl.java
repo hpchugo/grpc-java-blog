@@ -5,11 +5,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.DeleteResult;
 import com.proto.blog.*;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -72,7 +74,7 @@ public class BlogServiceImpl extends BlogServiceGrpc.BlogServiceImplBase {
                     .append("_id", new ObjectId(blog.getId()));
 
             System.out.println("Replacing blog in database");
-            collection.replaceOne(eq("_id",result.getObjectId("_id")), replacement);
+            collection.replaceOne(eq("_id", result.getObjectId("_id")), replacement);
             System.out.println("Replaced! Sending as a response");
 
             responseObserver.onNext(UpdateBlogResponse.newBuilder()
@@ -80,6 +82,23 @@ public class BlogServiceImpl extends BlogServiceGrpc.BlogServiceImplBase {
                     .build());
             responseObserver.onCompleted();
         }
+    }
+
+
+    @Override
+    public void deleteBlog(DeleteBlogRequest request, StreamObserver<DeleteBlogResponse> responseObserver) {
+        System.out.println("Received Create Blog request");
+        String blogId = request.getBlogId();
+        try{
+            collection.deleteOne(eq("_id", new ObjectId(blogId)));
+            System.out.println("Blog was deleted");
+        }catch (Exception e){
+            throw new StatusRuntimeException(Status.fromCode(Status.Code.NOT_FOUND)
+                    .augmentDescription(e.getLocalizedMessage())
+                    .withDescription("The blog with the corresponding id was not found"));
+        }
+        responseObserver.onNext(DeleteBlogResponse.newBuilder().setBlogId(blogId).build());
+        responseObserver.onCompleted();
     }
 
     private Document findBlogById(String blogId){
