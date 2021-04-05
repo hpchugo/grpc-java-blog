@@ -49,6 +49,9 @@ public class BlogClient {
         DeleteBlogResponse deleteBlogResponse =blogClient.deleteBlog(DeleteBlogRequest.newBuilder().setBlogId(blogId).build());
         out.printf("Deleted blog\n Received update blog response %s", deleteBlogResponse.toString());
 
+        out.println("Listing blog...");
+        blogClient.listBlog(ListBlogRequest.newBuilder().build()).forEachRemaining(listBlogResponse -> out.println(listBlogResponse.getBlog().toString()));
+
         channel.shutdown();
         out.println("Shutting down channel");
     }
