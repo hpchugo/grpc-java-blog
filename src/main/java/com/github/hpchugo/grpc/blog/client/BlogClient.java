@@ -1,19 +1,8 @@
 package com.github.hpchugo.grpc.blog.client;
 
-import com.proto.greet.*;
-import com.proto.greet.GreetServiceGrpc.GreetServiceBlockingStub;
-import com.proto.greet.GreetServiceGrpc.GreetServiceStub;
+import com.proto.blog.*;
 import io.grpc.*;
-import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
-import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
-import io.grpc.stub.StreamObserver;
-
 import javax.net.ssl.SSLException;
-import java.io.File;
-import java.util.Arrays;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import static java.lang.System.out;
 
 public class BlogClient {
@@ -23,23 +12,43 @@ public class BlogClient {
         main.run();
     }
 
-    public void run() throws SSLException {
+    public void run() {
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("localhost", 50051)
+                .forAddress("localhost", 50053)
                 .usePlaintext() //Disable ssl
                 .build();
 
-        ManagedChannel secureChannel = NettyChannelBuilder
-                .forAddress("localhost", 50051)
-                .sslContext(GrpcSslContexts
-                        .forClient()
-                        .trustManager(new File("ssl/ca.crt"))
-                        .build())
+        BlogServiceGrpc.BlogServiceBlockingStub blogClient = BlogServiceGrpc.newBlockingStub(channel);
+        Blog blog = Blog.newBuilder()
+                .setAuthorId("Kakarot")
+                .setTitle("New Blog!")
+                .setContent("Hello World this is my first blog")
+                .build();
+        out.println("Shutting down channel");
+
+        CreateBlogResponse response = blogClient.createBlog(CreateBlogRequest.newBuilder().setBlog(blog).build());
+        out.printf("Received create blog response %s", response.toString());
+
+        out.println("Reading blog...");
+        String blogId = "606b515453be4237210117f5";//response.getBlog().getId();
+        ReadBlogResponse readBlogResponse = blogClient.readBlog(ReadBlogRequest.newBuilder().setBlogId(blogId).build());
+        out.printf("Received create blog response %s", readBlogResponse.toString());
+
+
+        Blog blogUpdated = Blog.newBuilder()
+                .setId(blogId)
+                .setAuthorId("Piccolo")
+                .setTitle("New Updated Blog!")
+                .setContent("Hello World this is my first blog! Updated")
                 .build();
 
+        out.println("Updating blog...");
+        UpdateBlogResponse updateBlogResponse =blogClient.updateBlog(UpdateBlogRequest.newBuilder().setBlog(blogUpdated).build());
 
+        out.println("Updating blog...");
+        out.printf("Received update blog response %s", updateBlogResponse.toString());
 
-        out.println("Shutting down channel");
         channel.shutdown();
+        out.println("Shutting down channel");
     }
 }
